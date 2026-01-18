@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Love You Dost - Surprise</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            background-color: #fff0f3;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+            max-width: 400px;
+            width: 95%;
+            border: 2px solid #ffccd5;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .message-box {
+            font-size: 1.6rem;
+            color: #ff4d6d;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .sender-name {
+            color: #590d22;
+            font-size: 1.3rem;
+            display: block;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .input-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #ffccd5;
+        }
+
+        input {
+            padding: 12px;
+            width: 85%;
+            border: 2px solid #ffb3c1;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .btn-whatsapp {
+            background: #25D366; /* WhatsApp Green Color */
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 90%;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            margin: 0 auto;
+        }
+
+        .btn-whatsapp:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <video autoplay loop muted playsinline id="myVideo">
+            <source src="1000029189.mp4" type="video/mp4">
+        </video>
+
+        <div class="message-box" id="displayArea">
+            I Love You Dost ❤️
+            <span class="sender-name" id="nameLabel"></span>
+        </div>
+
+        <div class="input-section">
+            <p style="color: #800f2f; margin-bottom: 10px;">Apna naam likhein aur share karein:</p>
+            <input type="text" id="nameInput" placeholder="Aapka Naam Yahan Likhein...">
+            <button class="btn-whatsapp" onclick="shareToWhatsApp()">
+                WhatsApp par Share karein 🚀
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // URL se name dikhane ka logic
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromName = urlParams.get('from');
+
+        if (fromName) {
+            document.getElementById('nameLabel').innerText = "- From: " + decodeURIComponent(fromName);
+        }
+
+        async function shareToWhatsApp() {
+            const name = document.getElementById('nameInput').value;
+            if (!name) {
+                alert("Pehle apna naam likhein!");
+                return;
+            }
+
+            // GitHub Pages wala URL automatically detect hoga
+            const currentUrl = window.location.origin + window.location.pathname;
+            const shareUrl = currentUrl + "?from=" + encodeURIComponent(name);
+            const messageText = `Dekho ${name} ne aapke liye ek message bheja hai! ❤️\nDekhne ke liye niche link par click karein:\n${shareUrl}`;
+
+            // Option 1: Try for System Native Share (Mobile Menu)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'I Love You Dost ❤️',
+                        text: messageText,
+                        url: shareUrl
+                    });
+                } catch (err) {
+                    console.log('Share cancel ho gaya');
+                    openWhatsApp(messageText);
+                }
+            } else {
+                // Option 2: Direct WhatsApp if Share API not supported
+                openWhatsApp(messageText);
+            }
+        }
+
+        function openWhatsApp(text) {
+            const waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+            window.open(waUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
